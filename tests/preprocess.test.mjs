@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { toGray, stretch, upscale, adaptiveThreshold, preprocess } from '../src/lib/preprocess.js';
+const rgba = (px) => new Uint8ClampedArray(px.flatMap((v) => [v, v, v, 255]));
+assert.deepEqual([...toGray(rgba([0, 255]), 2, 1)], [0, 255]);
+const low = new Uint8ClampedArray([100, 110, 120, 130, 140, 150, 160, 170, 100, 170]);
+const st = stretch(low); assert.ok(Math.max(...st) > 240 && Math.min(...st) < 15, 'stretch widens range');
+const flat = new Uint8ClampedArray(50).fill(128); assert.deepEqual([...stretch(flat)], [...flat]);
+const up = upscale(new Uint8ClampedArray([0, 255, 0, 255]), 2, 2, 2); assert.equal(up.w, 4); assert.equal(up.h, 4);
+const bin = adaptiveThreshold(new Uint8ClampedArray(400).fill(200), 20, 20); assert.ok([...bin].every((v) => v === 255), 'flat bright -> white');
+const small = preprocess(new Uint8ClampedArray(400 * 200 * 4).fill(255), 400, 200, { mode: 'stretch' }); assert.equal(small.w, 1600);
+const big = preprocess(new Uint8ClampedArray(2000 * 10 * 4).fill(255), 2000, 10, { mode: 'stretch' }); assert.equal(big.w, 2000, 'large images are not resized');
+const none = preprocess(rgba([10, 20]), 2, 1, { mode: 'none' }); assert.equal(none.w, 2);
+console.log('PASS preprocess (8 checks)');

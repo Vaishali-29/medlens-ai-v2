@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body { @apply bg-white text-ink font-sans antialiased; }
+:focus-visible { outline: 3px solid #0E9AA7; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

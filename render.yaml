@@ -1,0 +1,16 @@
+# Render Blueprint: one web service hosts the built frontend + the /api proxy.
+services:
+  - type: web
+    name: medlens-ai
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: AI_PROVIDER
+        value: gemini
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
+      - key: ALLOWED_ORIGINS
+        value: https://medlens-ai-tawny.vercel.app
+      - key: GEMINI_API_KEY
+        sync: false   # you enter this in the Render dashboard; it is never committed
